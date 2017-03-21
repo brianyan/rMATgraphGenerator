@@ -39,7 +39,7 @@ struct rMat {
   rMat(intT _n, intT _seed,
        double _a, double _b, double _c) {
     n = _n; a = _a; ab = _a + _b; abc = _a+_b+_c;
-    h = hash<uintT>(_seed);
+    h = dataGen::hash<uintT>(_seed);
     utils::myAssert(abc <= 1.0,
 		    "in rMat: a + b + c add to more than 1");
     utils::myAssert((1 << utils::log2Up(n)) == n,
@@ -50,7 +50,7 @@ struct rMat {
     if (nn==1) return edge<intT>(0,0);
     else {
       edge<intT> x = rMatRec(nn/2, randStart + randStride, randStride);
-      double r = hash<double>(randStart);
+      double r = dataGen::hash<double>(randStart);
       if (r < a) return x;
       else if (r < ab) return edge<intT>(x.u,x.v+nn/2);
       else if (r < abc) return edge<intT>(x.u+nn/2, x.v);
@@ -59,8 +59,8 @@ struct rMat {
   }
 
   edge<intT> operator() (intT i) {
-    intT randStart = hash<uintT>((2*i)*h);
-    intT randStride = hash<uintT>((2*i+1)*h);
+    intT randStart = dataGen::hash<uintT>((2*i)*h);
+    intT randStride = dataGen::hash<uintT>((2*i+1)*h);
     return rMatRec(n, randStart, randStride);
   }
 };

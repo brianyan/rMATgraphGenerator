@@ -45,12 +45,12 @@ namespace benchIO {
       : Chars(C), n(nn), Strings(S), m(mm) {}
     void del() {free(Chars); free(Strings);}
   };
- 
+
   inline bool isSpace(char c) {
     switch (c)  {
-    case '\r': 
-    case '\t': 
-    case '\n': 
+    case '\r':
+    case '\t':
+    case '\n':
     case 0:
     case ' ' : return true;
     default : return false;
@@ -61,14 +61,14 @@ namespace benchIO {
 
   // parallel code for converting a string to words
   words stringToWords(char *Str, long n) {
-    parallel_for (long i=0; i < n; i++) 
-      if (isSpace(Str[i])) Str[i] = 0; 
+    parallel_for (long i=0; i < n; i++)
+      if (isSpace(Str[i])) Str[i] = 0;
 
     // mark start of words
     bool *FL = newA(bool,n);
     FL[0] = Str[0];
     parallel_for (long i=1; i < n; i++) FL[i] = Str[i] && !Str[i-1];
-    
+
     // offset for each start of word
     _seq<long> Off = sequence::packIndex<long>(FL, n);
     long m = Off.n;
@@ -112,11 +112,11 @@ namespace benchIO {
   inline void xToString(char* s, char* a) { sprintf(s,"%s",a);}
 
   template <class A, class B>
-  inline int xToStringLen(pair<A,B> a) { 
+  inline int xToStringLen(pair<A,B> a) {
     return xToStringLen(a.first) + xToStringLen(a.second) + 1;
   }
   template <class A, class B>
-  inline void xToString(char* s, pair<A,B> a) { 
+  inline void xToString(char* s, pair<A,B> a) {
     int l = xToStringLen(a.first);
     xToString(s,a.first);
     s[l] = ' ';
@@ -131,7 +131,7 @@ namespace benchIO {
     {parallel_for(long i=0; i < n; i++) L[i] = xToStringLen(A[i])+1;}
     long m = sequence::scan(L,L,n,utils::addF<long>(),(long) 0);
     char* B = newA(char,m);
-    parallel_for(long j=0; j < m; j++) 
+    parallel_for(long j=0; j < m; j++)
       B[j] = 0;
     parallel_for(long i=0; i < n-1; i++) {
       xToString(B + L[i],A[i]);
@@ -158,7 +158,7 @@ namespace benchIO {
       os.write(S.A, S.n);
       S.del();
       offset += BSIZE;
-    }    
+    }
   }
 
   template <class T>
@@ -168,7 +168,7 @@ namespace benchIO {
       std::cout << "Unable to open file: " << fileName << std::endl;
       return 1;
     }
-    file << header << endl;
+    // file << header << endl;
     writeArrayToStream(file, A, n);
     file.close();
     return 0;
